@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fetching and Reading XML Data by Steve Griffith</title>
+    <!-- Simple.css https://simplecss.org/ was created by Kev Quirk and is licensed under the MIT license. -->
+    <link rel="stylesheet" href="css/simple.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="estilos.css">
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+ crossorigin=""></script>
+<body>
+<h1>Mapa de terremotos Espana</h1>
+<h2>
+    
+</h2>
+
+    <div id="map">
+
+
+
+    </div>
+    
+    <script>
+
+const map = L.map('map').setView([40.4637, -3.7492], 5); // Centered at Spain
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    $.ajax({
+    url: 'xml-Json.php',
+    method: 'GET',
+    dataType: 'json',
+    success: function(data) {
+        console.log(data);
+        data.item.forEach(function(earthquake) {
+            const marker = L.marker([earthquake.geo.lat, earthquake.geo.long]).addTo(map)
+                .bindPopup(`<b>${earthquake.title}</b><br />${earthquake.description}`);
+        });
+    },
+    error: function(error) {
+        console.log('Error:', error);
+    }
+});
+        const circle = L.circle([51.508, -0.11], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(map).bindPopup('I am a circle.');
+    
+        const polygon = L.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(map).bindPopup('I am a polygon.');
+    
+    
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent(`You clicked the map at ${e.latlng.toString()}`)
+                .openOn(map);
+        }
+    
+        map.on('click', onMapClick);
+    
+    </script>
+</body>
+</html>
